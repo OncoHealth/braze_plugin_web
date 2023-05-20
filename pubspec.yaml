@@ -1,6 +1,6 @@
 name: braze_plugin_web
 description: Unofficial Braze Plugin for Flutter for Web. It is mostly a Flutter Web Plugin acting as a wrapper around the official Braze Web SDK.
-#repository:
+repository: https://github.com/OncoHealth/braze_plugin_web
 version: 0.1.0
 
 environment:
