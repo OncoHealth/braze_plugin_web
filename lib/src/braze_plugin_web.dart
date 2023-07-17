@@ -2,7 +2,6 @@ import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
 import 'braze_plugin_js.dart';
 
-
 /// Simplified proxy version of the Braze SDK.
 /// If more control over the Braze Web SDK is needed, use `BrazePluginJS`
 /// directly or create a new proxy like this one.
@@ -27,9 +26,8 @@ class BrazeClient {
     bool automaticallyShowInAppMessages = false,
     bool enableLogging = false,
   }) {
-    var options = InitializationOptions(
-        baseUrl: baseUrl,
-        enableLogging: enableLogging);
+    var options =
+        InitializationOptions(baseUrl: baseUrl, enableLogging: enableLogging);
 
     BrazePluginJS.initialize(apiKey, options);
 
@@ -44,10 +42,10 @@ class BrazeClient {
   }
 
   static void setCustomAttribute(
-      String key,
-      dynamic value,
-      {bool flush = false}
-    ) {
+    String key,
+    dynamic value, {
+    bool flush = false,
+  }) {
     var user = BrazePluginJS.getUser();
     user.setCustomUserAttribute(key, value, false);
 
@@ -55,8 +53,9 @@ class BrazeClient {
   }
 
   static void setCustomAttributes(
-      Map<String, dynamic> attributes,
-      {bool flush = false}) {
+    Map<String, dynamic> attributes, {
+    bool flush = false,
+  }) {
     var user = BrazePluginJS.getUser();
     attributes.forEach((key, value) {
       user.setCustomUserAttribute(key, value, false);
@@ -66,17 +65,15 @@ class BrazeClient {
   }
 
   static void logCustomEvent(
-      String key,
-      Map<String, dynamic>? properties,
-      {bool flush = false}
-    ) {
+    String key,
+    Map<String, dynamic>? properties, {
+    bool flush = false,
+  }) {
     BrazePluginJS.logCustomEvent(key, properties);
 
     if (flush) BrazePluginJS.requestImmediateDataFlush();
   }
-
 }
-
 
 /// Implementation of the Braze Plugin for Web.
 class BrazePluginWeb {
@@ -87,11 +84,9 @@ class BrazePluginWeb {
     /// Don't intend to use method channel for web, as this adds an overhead
     instance = BrazePluginWeb();
 
-    // TODO: Add callback to subscribe to content cards
     // Sets the call from JavaScript handler
     // _jsOnEvent = allowInterop((dynamic event) {
     //   //Process JavaScript call here
     // });
   }
-
 }

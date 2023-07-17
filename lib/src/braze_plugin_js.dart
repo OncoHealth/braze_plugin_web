@@ -9,11 +9,11 @@ class BrazePluginJS {
   external static automaticallyShowInAppMessages();
   external static changeUser(String userId, String? signature);
   external static User getUser();
-  external static logCustomEvent(String eventName, Map<String, dynamic>? eventProperties);
+  external static logCustomEvent(
+      String eventName, Map<String, dynamic>? eventProperties);
   external static openSession();
   external static requestImmediateDataFlush();
 }
-
 
 @JS()
 @anonymous
@@ -81,7 +81,6 @@ class InitializationOptions {
   external int? get sessionTimeoutInSeconds;
   external set sessionTimeoutInSeconds(int? v);
 
-
   external factory InitializationOptions({
     bool? allowCrawlerActivity,
     bool? allowUserSuppliedJavascript,
@@ -110,7 +109,6 @@ class InitializationOptions {
 @JS()
 @anonymous
 class User {
-  // TODO: Complete
   external setCountry(String? country);
   external setCustomUserAttribute(String key, dynamic value, bool? merge);
 }
