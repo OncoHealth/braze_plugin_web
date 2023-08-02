@@ -40,7 +40,7 @@ BrazeClient.setCustomAttributes({
                 'test_web_plugin_1': 'Hi!',
                 'test_web_plugin_2': 27,
               });
-BrazeClient.logCustomEvent('test_web_plugin_event', { 'prop1': false });
+BrazeClient.logCustomEvent('test_web_plugin_event', jsonEncode({ 'prop1': false }));
 
 ```
 

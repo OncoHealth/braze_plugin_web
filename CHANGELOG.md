@@ -15,3 +15,7 @@
 
 * Fixed `BrazeClient.logCustumEvent` to properly convert dart Maps to js Objects
 * Improved Documentation
+
+# 0.1.4 - August 2023
+
+* Improved Documentation
