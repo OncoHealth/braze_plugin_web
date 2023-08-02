@@ -1,7 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import 'package:braze_plugin_web/braze_plugin_web.dart';
-
 
 /// Set the Braze API Key and Base URL with Dart Environment Variables
 /// Run Args: --dart-define=apiKey=1234567890 --dart-define=baseUrl=sdk.iad-02.braze.com
@@ -9,7 +10,6 @@ void main() => runApp(MyApp());
 
 const String _brazeApiKey = String.fromEnvironment('apiKey');
 const String _brazeBaseUrl = String.fromEnvironment('baseUrl');
-
 
 class MyApp extends StatelessWidget {
   @override
@@ -33,18 +33,16 @@ class BrazeWebExamplePageState extends State<BrazeWebExamplePage> {
       appBar: AppBar(
         title: Text('Braze Web Example'),
       ),
-      body:
-      Column(
+      body: Column(
         children: [
           TextButton(
             child: const Text('Initialize'),
             onPressed: () async {
-              BrazeClient
-                .initialize(
-                  apiKey: _brazeApiKey,
-                  baseUrl: _brazeBaseUrl,
-                  automaticallyShowInAppMessages: true,
-                  enableLogging: true,
+              BrazeClient.initialize(
+                apiKey: _brazeApiKey,
+                baseUrl: _brazeBaseUrl,
+                automaticallyShowInAppMessages: true,
+                enableLogging: true,
               );
             },
           ),
@@ -73,13 +71,13 @@ class BrazeWebExamplePageState extends State<BrazeWebExamplePage> {
             child: const Text('Log Custom Event'),
             onPressed: () async {
               BrazeClient.logCustomEvent(
-                  'test_web_plugin_event', { 'prop1': false });
+                'test_web_plugin_event',
+                jsonEncode({'prop1': false}),
+              );
             },
           ),
         ],
       ),
     );
   }
-
 }
-

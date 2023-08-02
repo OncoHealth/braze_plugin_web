@@ -8,6 +8,8 @@ import 'braze_plugin_js.dart';
 class BrazeClient {
   BrazeClient._();
 
+  /// A more robust initializeR to replace [initialize], allowing the
+  /// provision of [InitializationOptions]
   static void initializeWithOptions({
     required String apiKey,
     required InitializationOptions options,
@@ -20,13 +22,15 @@ class BrazeClient {
     }
   }
 
+  /// An initializer for the [BrazeClient]. This or [initializeWithOptions]
+  /// ***must*** be called for further operation with the [BrazeClient]
   static void initialize({
     required String apiKey,
     required String baseUrl,
     bool automaticallyShowInAppMessages = false,
     bool enableLogging = false,
   }) {
-    var options =
+    final options =
         InitializationOptions(baseUrl: baseUrl, enableLogging: enableLogging);
 
     BrazePluginJS.initialize(apiKey, options);
@@ -36,22 +40,30 @@ class BrazeClient {
     }
   }
 
+  /// Performs [BrazePluginJS.changeUser] and [BrazePluginJS.openSession] for
+  /// the provided [userId], starting a new session for the provided credential.
+  /// [BrazeClient.initialize] or [BrazeClient.initializeWithOptions]
+  /// must be called before calling this
   static void identify(String userId) {
     BrazePluginJS.changeUser(userId, null);
     BrazePluginJS.openSession();
   }
 
+  /// [BrazeClient.initialize] or [BrazeClient.initializeWithOptions]
+  /// must be called before calling this
   static void setCustomAttribute(
     String key,
     dynamic value, {
     bool flush = false,
   }) {
-    var user = BrazePluginJS.getUser();
+    final user = BrazePluginJS.getUser();
     user.setCustomUserAttribute(key, value, false);
 
     if (flush) BrazePluginJS.requestImmediateDataFlush();
   }
 
+  /// [BrazeClient.initialize] or [BrazeClient.initializeWithOptions]
+  /// must be called before calling this
   static void setCustomAttributes(
     Map<String, dynamic> attributes, {
     bool flush = false,
@@ -64,12 +76,18 @@ class BrazeClient {
     if (flush) BrazePluginJS.requestImmediateDataFlush();
   }
 
+  /// [BrazeClient.initialize] or [BrazeClient.initializeWithOptions]
+  /// must be called before calling this
   static void logCustomEvent(
     String key,
-    Map<String, dynamic>? properties, {
+    String? properties, {
     bool flush = false,
   }) {
-    BrazePluginJS.logCustomEvent(key, properties);
+    final brazeProperties = properties == null || properties.isEmpty
+        ? properties
+        : jsonParse(properties);
+
+    BrazePluginJS.logCustomEvent(key, brazeProperties);
 
     if (flush) BrazePluginJS.requestImmediateDataFlush();
   }
