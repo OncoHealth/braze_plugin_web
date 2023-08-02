@@ -49,6 +49,8 @@ class BrazeClient {
     BrazePluginJS.openSession();
   }
 
+  /// Sets [value] as a custom attribute for the given [ BrazePluginJS.getUser]
+  ///
   /// [BrazeClient.initialize] or [BrazeClient.initializeWithOptions]
   /// must be called before calling this
   static void setCustomAttribute(
@@ -62,6 +64,8 @@ class BrazeClient {
     if (flush) BrazePluginJS.requestImmediateDataFlush();
   }
 
+  /// Sets [attributes] for the given [BrazePluginJS.getUser]
+  ///
   /// [BrazeClient.initialize] or [BrazeClient.initializeWithOptions]
   /// must be called before calling this
   static void setCustomAttributes(
@@ -76,6 +80,9 @@ class BrazeClient {
     if (flush) BrazePluginJS.requestImmediateDataFlush();
   }
 
+  /// Logs a custom event [key] to braze with [properties]
+  /// that are [jsonEncode]'d.
+  ///
   /// [BrazeClient.initialize] or [BrazeClient.initializeWithOptions]
   /// must be called before calling this
   static void logCustomEvent(
