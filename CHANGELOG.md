@@ -10,3 +10,8 @@
 
 * Reverted js version lock
 * Fixed path issue with BrazeWebPlugin
+
+# 0.1.3 - August 2023
+
+* Fixed `BrazeClient.logCustumEvent` to properly convert dart Maps to js Objects
+* Improved Documentation
