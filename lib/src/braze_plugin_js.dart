@@ -1,6 +1,7 @@
 @JS()
 library braze;
 
+import 'package:braze_plugin_web/src/data/braze_card.dart';
 import 'package:js/js.dart';
 
 @JS('JSON.parse')
@@ -24,6 +25,16 @@ class BrazePluginJS {
   external static openSession();
 
   external static requestImmediateDataFlush();
+
+  external static subscribeToContentCardsUpdates(Function(ListBrazeCardsJsImpl cards) d);
+
+  external static requestContentCardsRefresh<T>(Function() successCallback, Function() errorCallback);
+
+  external static bool logCardDismissal(BrazeCardImpl card);
+
+  external static logContentCardClicked(String cardId);
+
+  external static logContentCardDismissed(String cardId);
 }
 
 /// Provides further customization for initializing the [BrazeClient]
@@ -145,4 +156,51 @@ class User {
   external setCountry(String? country);
 
   external setCustomUserAttribute(String key, dynamic value, bool? merge);
+
+  /// adopted from: [https://js.appboycdn.com/web-sdk/latest/doc/classes/braze.user.html#removefromsubscriptiongroup]
+  external bool addToSubscriptionGroup(String subscriptionGroupId);
+
+  external bool removeFromSubscriptionGroup(String subscriptionGroupId);
+}
+
+@JS()
+@anonymous
+class ListBrazeCardsJsImpl {
+  external List<BrazeCardImpl> get cards;
+
+  external bool full_sync;
+
+  external int last_card_updated_at;
+  external int last_full_sync_at;
+}
+
+@JS('Card')
+@anonymous
+abstract class BrazeCardImpl {
+  external String id;
+  external bool? viewed;
+  external String? title;
+  external String? imageUrl;
+  external String? description;
+  external DateTime? created;
+  external DateTime? updated;
+  external List<String>? categories;
+  external String? expiresAt;
+  external String? url;
+  external String? linkText;
+  external double? aspectRatio;
+  external Map<String, dynamic>? extras;
+  external bool? pinned;
+  external bool? dismissible;
+  external bool? clicked;
+
+  external String Yc;
+
+  external dismissCard();
+  external removeAllSubscriptions();
+  external removeSubscription(String subscriptionGuid);
+  external subscribeToClickedEvent(Function subscriber);
+  external subscribeToDismissedEvent(Function subscriber);
+
+  external static BrazeCardImpl fromContentCardsJson(dynamic data);
 }

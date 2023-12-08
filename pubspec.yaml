@@ -16,6 +16,9 @@ dependencies:
   # JavaScript Interop
   js: ^0.6.5
 
+  # used only to support BrazeContentCardWrapping
+  braze_plugin: ^8.1.0
+
 flutter:
   plugin:
     platforms:
