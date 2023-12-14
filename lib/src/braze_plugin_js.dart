@@ -1,7 +1,6 @@
 @JS()
 library braze;
 
-import 'package:braze_plugin_web/src/data/braze_card.dart';
 import 'package:js/js.dart';
 
 @JS('JSON.parse')
@@ -30,10 +29,12 @@ class BrazePluginJS {
 
   external static requestContentCardsRefresh<T>(Function() successCallback, Function() errorCallback);
 
-  external static bool logCardDismissal(BrazeCardImpl card);
+  external static bool logCardDismissal(dynamic card);
 
+  /// log card hided by id not implemented on braze sdk
   external static logContentCardClicked(String cardId);
 
+  /// log card hided by id not implemented on braze sdk
   external static logContentCardDismissed(String cardId);
 }
 
@@ -177,6 +178,25 @@ class ListBrazeCardsJsImpl {
 @JS('Card')
 @anonymous
 abstract class BrazeCardImpl {
+  external factory BrazeCardImpl({
+    id,
+    viewed,
+    title,
+    imageUrl,
+    description,
+    created,
+    updated,
+    categories,
+    expiresAt,
+    url,
+    linkText,
+    aspectRatio,
+    extras,
+    pinned,
+    dismissible,
+    clicked,
+    Yc,
+  });
   external String id;
   external bool? viewed;
   external String? title;

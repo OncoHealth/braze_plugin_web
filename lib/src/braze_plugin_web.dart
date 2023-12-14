@@ -3,23 +3,31 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:js';
 
-import 'package:braze_plugin_web/src/data/braze_content_cards_web.dart';
-import 'package:braze_plugin_web/src/helper/js_interop.dart';
+import 'package:braze_plugin_web/src/data/content_cards.dart';
+import 'package:braze_plugin_web/src/helper/parse_helper.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
 import 'braze_plugin_js.dart';
-import 'data/braze_card.dart';
 import 'helper/utils.dart';
 
 /// Simplified proxy version of the Braze SDK.
 /// If more control over the Braze Web SDK is needed, use `BrazePluginJS`
 /// directly or create a new proxy like this one.
 class BrazeClient {
-  BrazeClient._();
+  BrazeClient._internal();
+  static final BrazeClient _instance = BrazeClient._internal();
+
+  static BrazeClient get instance => _instance;
+
+  /// Only for internal usage to not parse content cards to Map in subscriber function and make a parsing back
+  /// For this purposes we are using a one time saving cuz every requestRefreshContent cards or cachedContentCards
+  /// should return a list of all content cards
+  /// TODO: find a way to parse ContentCard back to js and call [.dismissContentCard()]
+  Map<String, dynamic> _savedContentCards = {};
 
   /// A more robust initializeR to replace [initialize], allowing the
   /// provision of [InitializationOptions]
-  static void initializeWithOptions({
+  void initializeWithOptions({
     required String apiKey,
     required InitializationOptions options,
     bool automaticallyShowInAppMessages = false,
@@ -33,7 +41,7 @@ class BrazeClient {
 
   /// An initializer for the [BrazeClient]. This or [initializeWithOptions]
   /// ***must*** be called for further operation with the [BrazeClient]
-  static void initialize({
+  void initialize({
     required String apiKey,
     required String baseUrl,
     bool automaticallyShowInAppMessages = false,
@@ -52,7 +60,7 @@ class BrazeClient {
   /// the provided [userId], starting a new session for the provided credential.
   /// [BrazeClient.initialize] or [BrazeClient.initializeWithOptions]
   /// must be called before calling this
-  static void identify(String userId) {
+  void identify(String userId) {
     BrazePluginJS.changeUser(userId, null);
     BrazePluginJS.openSession();
   }
@@ -61,7 +69,7 @@ class BrazeClient {
   ///
   /// [BrazeClient.initialize] or [BrazeClient.initializeWithOptions]
   /// must be called before calling this
-  static void setCustomAttribute(
+  void setCustomAttribute(
     String key,
     dynamic value, {
     bool flush = false,
@@ -76,7 +84,7 @@ class BrazeClient {
   ///
   /// [BrazeClient.initialize] or [BrazeClient.initializeWithOptions]
   /// must be called before calling this
-  static void setCustomAttributes(
+  void setCustomAttributes(
     Map<String, dynamic> attributes, {
     bool flush = false,
   }) {
@@ -93,7 +101,7 @@ class BrazeClient {
   ///
   /// [BrazeClient.initialize] or [BrazeClient.initializeWithOptions]
   /// must be called before calling this
-  static void logCustomEvent(
+  void logCustomEvent(
     String key,
     String? properties, {
     bool flush = false,
@@ -107,67 +115,51 @@ class BrazeClient {
 
   /// braze add to subscription group
   ///
-  static bool addToSubscriptionGroup(String groupId) {
+  bool addToSubscriptionGroup(String groupId) {
     return BrazePluginJS.getUser().addToSubscriptionGroup(groupId);
   }
 
   /// braze remove to subscription group
   ///
-  static bool removeToSubscriptionGroup(String groupId) {
+  bool removeToSubscriptionGroup(String groupId) {
     return BrazePluginJS.getUser().removeFromSubscriptionGroup(groupId);
   }
 
   /// subscribe to braze content cards
-  static Stream<List<BrazeContentCardWeb>> subscribeToContentCardsUpdates() {
-    late StreamController<List<BrazeContentCardWeb>> controller;
+  Stream<List<Map<String, dynamic>>> subscribeToContentCardsUpdates() {
+    late StreamController<List<Map<String, dynamic>>> controller;
 
     BrazePluginJS.subscribeToContentCardsUpdates(allowInterop((res) {
-      final BrazeCards response = BrazeCards.getInstance(res);
-      final cards = response.jsObject.cards;
-      log('response: ${cards}');
-      log("fd: ${cards.first.dismissCard()}");
-      BrazePluginJS.logCardDismissal(cards.first);
-      // final List<dynamic>? cards = response.containsKey('cards') ? response['cards'] : null;
-      //
-      // /// TODO: to parse content cards we need to match original braze plugin after all
-      // ///check: https://github.com/braze-inc/braze-flutter-sdk/blob/7ff4c8a810b19adf71f5ca40343a352ec9105f9a/lib/braze_plugin.dart#L698
-      // if (cards != null) {
-      //   try {
-      //     final List<BrazeContentCardWeb> parsedCards = cards.map((e) {
-      //       final map = Map<String, dynamic>.from(e);
-      //       final BrazeContentCardWeb parsedResult = BrazeContentCardWeb.fromJson(map);
-      //       return parsedResult;
-      //     }).toList();
-      //     controller.add(parsedCards);
-      //   } catch (e) {
-      //     //TODO: log implementation, this means we cannot parse data in corrent way or response structure changed
-      //     log(e.toString());
-      //   }
-      // }
-    }));
-    // BrazePluginJS.subscribeToContentCardsUpdates(allowInterop((res) {
-    //   final Map response = dartify(res);
-    //   log('response: $response');
-    //   final List<dynamic>? cards = response.containsKey('cards') ? response['cards'] : null;
-    //
-    //   /// TODO: to parse content cards we need to match original braze plugin after all
-    //   ///check: https://github.com/braze-inc/braze-flutter-sdk/blob/7ff4c8a810b19adf71f5ca40343a352ec9105f9a/lib/braze_plugin.dart#L698
-    //   if (cards != null) {
-    //     try {
-    //       final List<BrazeContentCardWeb> parsedCards = cards.map((e) {
-    //         final map = Map<String, dynamic>.from(e);
-    //         final BrazeContentCardWeb parsedResult = BrazeContentCardWeb.fromJson(map);
-    //         return parsedResult;
-    //       }).toList();
-    //       controller.add(parsedCards);
-    //     } catch (e) {
-    //       //TODO: log implementation, this means we cannot parse data in corrent way or response structure changed
-    //       log(e.toString());
-    //     }
-    //   }
-    // }));
+      final ContentCards response = ContentCards.getInstance(res);
+      final cardsJs = response.jsObject.cards;
 
-    controller = StreamController<List<BrazeContentCardWeb>>.broadcast(
+      if (cardsJs.isNotEmpty) {
+        try {
+          final List<Map<String, dynamic>> parsedCards = cardsJs.map((e) {
+            final map = Map<String, dynamic>.from(dartify(e));
+
+            ///saving this to remove if need for later
+            _savedContentCards.addAll({map["id"]: e});
+
+            //TODO: found another way how to parse, parsing extras to normal dart types
+            //we doing this to parse custom braze card type such as bool which is comming to us in string type
+            if (map['extras'] is Map<String, dynamic>) {
+              final Map<String, dynamic> parsedMap =
+                  (map['extras'] as Map<String, dynamic>).map((key, value) => MapEntry(key, parseDynamic(value)));
+              map['extras'] = parsedMap;
+            }
+            return map;
+          }).toList();
+
+          controller.add(parsedCards);
+        } catch (e) {
+          //TODO: log implementation, this means we cannot parse data in correct way or response structure changed
+          log(e.toString());
+        }
+      }
+    }));
+
+    controller = StreamController<List<Map<String, dynamic>>>.broadcast(
       onCancel: () {
         controller.close();
       },
@@ -177,7 +169,7 @@ class BrazeClient {
   }
 
   /// request content cards updates
-  static void requestContentCardsRefresh({Function? onSuccess, Function? onError}) {
+  void requestContentCardsRefresh({Function? onSuccess, Function? onError}) {
     BrazePluginJS.requestContentCardsRefresh(
       allowInterop(() {
         onSuccess?.call();
@@ -188,46 +180,23 @@ class BrazeClient {
     );
   }
 
-  static bool logContentCardDismissed(BrazeContentCardWeb card) {
-    // var cardJs = BrazeCardJs(
-    //   id: card.id ?? '',
-    //   // expiresAt: jsify(card.expiresAt.toIso8601String()),
-    //   extras: card.extras,
-    //   pinned: card.pinned,
-    //   // updated: jsify(card.updated.toIso8601String()),
-    //   viewed: true,
-    // );
-    // BrazePluginJS.logContentCardDismissed(card.id ?? '');
-    Map map = {
-      "ar": 1,
-      "ca": 1702049609,
-      "cl": false,
-      "db": true,
-      "dm": "",
-      "ds": "ContetrwerweContetrwerweContetrwerweContetrwerweContetrwerweContetrwerwe",
-      "e": {"hhhh": "wefwefewf"},
-      "hhhh": "wefwefewf",
-      "ea": 1702654409,
-      "i":
-          "https://braze-images.com/appboy/communication/marketing/content_cards_message_variations/images/65705a3e420133004b30fc83/9eedffcc4a3e86a8b2004173112f62a0eb7ae775/original.png?1701861956",
-      "id":
-          "NjU3MDVhM2U0MjAxMzMwMDRiMzBmYzdjXyRfY2M9ZjM2NDNmYmYtMjYzZS1hZWQ5LWUyM3QtMDlkY2Y4ODQ1YjUwJm12PTY1NzA1YTNlNDIwMTMzMDA0YjMwZmM4MyZwaT1jbXA=",
-      "p": false,
-      "tp": "short_news",
-      "tt": "Contetrwerwe",
-      "u": null,
-      "uw": null,
-      "v": false,
-      "Yc": "ab-classic-card"
-    };
-    final cardJs = BrazeCardImpl.fromContentCardsJson(map);
-    final card2 = JsObject.jsify(map);
-    final cardJs2 = BrazeCardImpl.fromContentCardsJson(card2);
-
-    // cardJs.dismissCard();
-    // final card2 = BrazeCard.getInstance(cardJs);
-    // final cardJsify = jsify(cardJs);
-    return BrazePluginJS.logCardDismissal(cardJs2);
+  /// Converting dart to js object not working for braze, take a looks on documnetation
+  /// also this is used like this to much exising React and Mobile implementation
+  ///
+  /// unfortunatly next implementation to converting object from dart to js is not working
+  /// thats why we need to store cards locally and then parse them back
+  ///
+  /// bool logContentCardDismissed(Map<String, dynamic> card) {
+  ///   BrazePluginJS.logCardDismissal(jsify(card) as BrazeCardImpl)
+  ///   return BrazePluginJS.logCardDismissal(cardsJs.jsObject);
+  /// }
+  bool logContentCardDismissed(String cardId) {
+    final card = _savedContentCards[cardId];
+    final deleted = BrazePluginJS.logCardDismissal(card);
+    if (deleted) {
+      _savedContentCards.removeWhere((key, value) => key == cardId);
+    }
+    return deleted;
   }
 }
 

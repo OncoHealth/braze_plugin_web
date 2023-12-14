@@ -25,3 +25,19 @@ class PromiseJsImpl<T> {
 Future<T> handleThenable<T>(PromiseJsImpl<T> thenable) async {
   return promiseToFuture(thenable);
 }
+
+/// Handles the [Future] object with the provided [mapper] function.
+PromiseJsImpl<S> handleFutureWithMapper<T, S>(
+  Future<T> future,
+  Func1<T, S> mapper,
+) {
+  return PromiseJsImpl<S>(allowInterop((
+    Function(S) resolve,
+    Function(Object) reject,
+  ) {
+    future.then((value) {
+      var mappedValue = mapper(value);
+      resolve(mappedValue);
+    }).catchError((error) => reject(error));
+  }));
+}

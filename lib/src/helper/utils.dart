@@ -7,6 +7,7 @@
 // adopted: Dmytro Diachenko @followthemoney1.
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:js/js.dart';
 import 'package:js/js_util.dart' as util;
@@ -90,6 +91,9 @@ dynamic jsify(
     return allowInterop(dartObject);
   }
 
+  if (dartObject is DateTime) {
+    return js.stringify(jsonEncode(dartObject.millisecondsSinceEpoch));
+  }
   Object? value = customJsify?.call(dartObject);
 
   if (value == null) {
