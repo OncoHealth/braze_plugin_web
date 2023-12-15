@@ -38,7 +38,7 @@ class BrazeWebExamplePageState extends State<BrazeWebExamplePage> {
           TextButton(
             child: const Text('Initialize'),
             onPressed: () async {
-              BrazeClient.initialize(
+              BrazeClient.instance.initialize(
                 apiKey: _brazeApiKey,
                 baseUrl: _brazeBaseUrl,
                 automaticallyShowInAppMessages: true,
@@ -49,19 +49,19 @@ class BrazeWebExamplePageState extends State<BrazeWebExamplePage> {
           TextButton(
             child: const Text('Identify'),
             onPressed: () async {
-              BrazeClient.identify('test-user');
+              BrazeClient.instance.identify('test-user');
             },
           ),
           TextButton(
             child: const Text('Set Custom Attribute'),
             onPressed: () async {
-              BrazeClient.setCustomAttribute('test_web_plugin', true);
+              BrazeClient.instance.setCustomAttribute('test_web_plugin', true);
             },
           ),
           TextButton(
             child: const Text('Set Custom Attributes'),
             onPressed: () async {
-              BrazeClient.setCustomAttributes({
+              BrazeClient.instance.setCustomAttributes({
                 'test_web_plugin_1': 'Hi!',
                 'test_web_plugin_2': 27,
               });
@@ -70,7 +70,7 @@ class BrazeWebExamplePageState extends State<BrazeWebExamplePage> {
           TextButton(
             child: const Text('Log Custom Event'),
             onPressed: () async {
-              BrazeClient.logCustomEvent(
+              BrazeClient.instance.logCustomEvent(
                 'test_web_plugin_event',
                 jsonEncode({'prop1': false}),
               );
