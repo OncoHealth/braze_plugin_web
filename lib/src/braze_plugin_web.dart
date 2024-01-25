@@ -44,8 +44,8 @@ class BrazeClient {
   /// the provided [userId], starting a new session for the provided credential.
   /// [BrazeClient.initialize] or [BrazeClient.initializeWithOptions]
   /// must be called before calling this
-  static void identify(String userId) {
-    BrazePluginJS.changeUser(userId, null);
+  static void identify(String userId, String? signature) {
+    BrazePluginJS.changeUser(userId, signature);
     BrazePluginJS.openSession();
   }
 

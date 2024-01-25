@@ -19,3 +19,7 @@
 # 0.1.4 - August 2023
 
 * Improved Documentation
+
+# 0.1.6 - January 2024
+
+* Added the `signature` argument for `BrazeClient.identify()`
