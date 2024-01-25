@@ -27,3 +27,7 @@
 # 0.1.7 - January 2024
 
 - Added missing BrazeClient changes
+
+# 0.1.8 - January 2024
+
+- Make `BrazeClient.identify() non-static`
