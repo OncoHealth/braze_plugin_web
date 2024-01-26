@@ -30,4 +30,8 @@
 
 # 0.1.8 - January 2024
 
-- Make `BrazeClient.identify() non-static`
+- Make `BrazeClient.identify()` non-static
+
+# 0.1.9 - January 2024
+
+- Expose `InitializationOptions`
