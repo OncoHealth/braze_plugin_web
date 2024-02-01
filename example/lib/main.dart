@@ -49,7 +49,7 @@ class BrazeWebExamplePageState extends State<BrazeWebExamplePage> {
           TextButton(
             child: const Text('Identify'),
             onPressed: () async {
-              BrazeClient.instance.identify('test-user');
+              BrazeClient.instance.identify('test-user', '');
             },
           ),
           TextButton(

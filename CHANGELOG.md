@@ -35,3 +35,7 @@
 # 0.1.9 - January 2024
 
 - Expose `InitializationOptions`
+
+# 0.1.10 - February 2024
+
+- Add `logContentCardImpression()` and `logContentCardClick()`

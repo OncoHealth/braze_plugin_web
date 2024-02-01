@@ -184,23 +184,45 @@ class BrazeClient {
     );
   }
 
-  /// Converting dart to js object not working for braze, take a looks on documnetation
-  /// also this is used like this to much exising React and Mobile implementation
-  ///
-  /// unfortunatly next implementation to converting object from dart to js is not working
-  /// thats why we need to store cards locally and then parse them back
-  ///
-  /// bool logContentCardDismissed(Map<String, dynamic> card) {
-  ///   BrazePluginJS.logCardDismissal(jsify(card) as BrazeCardImpl)
-  ///   return BrazePluginJS.logCardDismissal(cardsJs.jsObject);
-  /// }
+  /// logContentCardDismissed(), logContentCardImpression() and
+  /// logContentCardClick() all require sending the original card object(s)
+  /// that were received in the BrazePluginJS library. `_savedContentCards` is
+  /// used to store the original card objects and their ids and is being used in
+  /// these methods to pass in the original card object to the BrazePluginJS
+  /// library.
   bool logContentCardDismissed(String cardId) {
     final card = _savedContentCards[cardId];
+
+    if (card == null) {
+      return false;
+    }
+
     final deleted = BrazePluginJS.logCardDismissal(card);
     if (deleted) {
       _savedContentCards.removeWhere((key, value) => key == cardId);
     }
     return deleted;
+  }
+
+  bool logContentCardImpression(String cardId) {
+    final card = _savedContentCards[cardId];
+
+    if (card == null) {
+      return false;
+    }
+
+    // BrazePluginJS expects a list of cards
+    return BrazePluginJS.logContentCardImpressions([card]);
+  }
+
+  bool logContentCardClick(String cardId) {
+    final card = _savedContentCards[cardId];
+
+    if (card == null) {
+      return false;
+    }
+
+    return BrazePluginJS.logContentCardClick(card);
   }
 }
 
