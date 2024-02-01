@@ -25,17 +25,20 @@ class BrazePluginJS {
 
   external static requestImmediateDataFlush();
 
-  external static subscribeToContentCardsUpdates(Function(ListBrazeCardsJsImpl cards) d);
+  external static subscribeToContentCardsUpdates(
+    Function(ListBrazeCardsJsImpl cards) d,
+  );
 
-  external static requestContentCardsRefresh<T>(Function() successCallback, Function() errorCallback);
+  external static requestContentCardsRefresh<T>(
+    Function() successCallback,
+    Function() errorCallback,
+  );
 
   external static bool logCardDismissal(dynamic card);
 
-  /// log card hided by id not implemented on braze sdk
-  external static logContentCardClicked(String cardId);
+  external static bool logContentCardClick(dynamic card);
 
-  /// log card hided by id not implemented on braze sdk
-  external static logContentCardDismissed(String cardId);
+  external static bool logContentCardImpressions(List<dynamic> cards);
 }
 
 /// Provides further customization for initializing the [BrazeClient]
