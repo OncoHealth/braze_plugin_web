@@ -13,7 +13,7 @@
 
 # 0.1.3 - August 2023
 
-- Fixed `BrazeClient.logCustumEvent` to properly convert dart Maps to js Objects
+- Fixed `BrazeClient.logCustomEvent` to properly convert dart Maps to js Objects
 - Improved Documentation
 
 # 0.1.4 - August 2023
@@ -39,3 +39,7 @@
 # 0.1.10 - February 2024
 
 - Add `logContentCardImpression()` and `logContentCardClick()`
+
+# 0.1.11 - March 2024
+
+- Add `User.getUserId()` and `getUserId()`

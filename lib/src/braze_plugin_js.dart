@@ -165,6 +165,8 @@ class User {
   external bool addToSubscriptionGroup(String subscriptionGroupId);
 
   external bool removeFromSubscriptionGroup(String subscriptionGroupId);
+
+  external String? getUserId();
 }
 
 @JS()
@@ -200,6 +202,7 @@ abstract class BrazeCardImpl {
     clicked,
     Yc,
   });
+
   external String id;
   external bool? viewed;
   external String? title;
@@ -220,9 +223,13 @@ abstract class BrazeCardImpl {
   external String Yc;
 
   external dismissCard();
+
   external removeAllSubscriptions();
+
   external removeSubscription(String subscriptionGuid);
+
   external subscribeToClickedEvent(Function subscriber);
+
   external subscribeToDismissedEvent(Function subscriber);
 
   external static BrazeCardImpl fromContentCardsJson(dynamic data);

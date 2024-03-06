@@ -15,6 +15,7 @@ import 'helper/utils.dart';
 /// directly or create a new proxy like this one.
 class BrazeClient {
   BrazeClient._internal();
+
   static final BrazeClient _instance = BrazeClient._internal();
 
   static BrazeClient get instance => _instance;
@@ -55,6 +56,12 @@ class BrazeClient {
     if (automaticallyShowInAppMessages) {
       BrazePluginJS.automaticallyShowInAppMessages();
     }
+  }
+
+  /// Returns the [userId] for the given [BrazePluginJS.getUser()] if any.
+  ///
+  String? getUserId() {
+    return BrazePluginJS.getUser().getUserId();
   }
 
   /// Performs [BrazePluginJS.changeUser] and [BrazePluginJS.openSession] for
